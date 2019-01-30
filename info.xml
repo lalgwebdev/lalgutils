@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="lalgutils" type="module">
+  <file>lalgutils</file>
+  <name>LALG Utilities</name>
+  <description>Various addons and utilities for the LALG Membership System</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>Tony Maynard-Smith</author>
+    <email>tony.maynard-smith@ntlworld.com</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">http://FIXME</url>
+    <url desc="Documentation">http://FIXME</url>
+    <url desc="Support">http://FIXME</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2018-11-30</releaseDate>
+  <version>0.1</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>5.0</ver>
+  </compatibility>
+  <comments>This is a new, undeveloped module</comments>
+  <civix>
+    <namespace>CRM/Lalgutils</namespace>
+  </civix>
+</extension>
