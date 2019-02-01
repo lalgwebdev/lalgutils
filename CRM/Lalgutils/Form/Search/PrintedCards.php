@@ -12,28 +12,23 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    *
    * @param array $formValues
    */
- public function __construct(&$formValues) {
+  public function __construct(&$formValues) {
     parent::__construct($formValues);
 
-     if (!isset($formValues['state_province_id'])) {
-      $this->_stateID = CRM_Utils_Request::retrieve('stateID', 'Integer');
-      if ($this->_stateID) {
-        $formValues['state_province_id'] = $this->_stateID;
-      }
-    }
+    // if (!isset($formValues['state_province_id'])) {
+    //   $this->_stateID = CRM_Utils_Request::retrieve('stateID', 'Integer');
+    //   if ($this->_stateID) {
+    //     $formValues['state_province_id'] = $this->_stateID;
+    //   }
+    // }
 
-    $this->_columns = array(
-      // ts('Contact ID') => 'contact_id',
-      // ts('Contact Type') => 'contact_type',
-      // ts('Name') => 'sort_name',
-      // ts('State') => 'state_province',
-
-      E::ts('Contact Id') => 'contact_id',
-      E::ts('Name') => 'sort_name',
-      E::ts('Street Address') => 'street_address',
-	  E::ts('City') => 'city',
-    );
-}
+    // $this->_columns = [
+    //   E::ts('Contact Id') => 'contact_id',
+    //   E::ts('Name') => 'sort_name',
+    //   E::ts('Street Address') => 'street_address',
+    //   E::ts('City') => 'city',
+    // ];
+  }
 
   /**
    * Prepare a set of search fields
@@ -41,9 +36,8 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @param CRM_Core_Form $form modifiable
    * @return void
    */
-  function buildForm(&$form) {
+  public function buildForm(&$form) {
     CRM_Utils_System::setTitle(E::ts('Printed Cards Required'));
-  return;
   }
 
   /**
@@ -53,7 +47,7 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    *  - summary: string
    *  - total: numeric
    */
-  function summary() {
+  public function summary() {
     return NULL;
     // return array(
     //   'summary' => 'This is a summary',
@@ -66,30 +60,29 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    *
    * @return array, keys are printable column headers and values are SQL column names
    */
-/*  function &columns() {
+  public function &columns() {
     // return by reference
-    $columns = array(
- //     E::ts('Contact Id') => 'contact_id',
+    $columns = [
+      E::ts('Contact Id') => 'contact_id',
       E::ts('Name') => 'sort_name',
       E::ts('Street Address') => 'street_address',
-	  E::ts('City') => 'city',
-    );
+      E::ts('City') => 'city',
+    ];
     return $columns;
   }
-*/
 
-  /**
-   * @param int $offset
-   * @param int $rowcount
-   * @param null $sort
-   * @param bool $returnSQL
-   *
-   * @return string
-   */
-  public function contactIDs($offset = 0, $rowcount = 0, $sort = NULL, $returnSQL = FALSE) {
-    return $this->all($offset, $rowcount, $sort, FALSE, TRUE);
-  }
- 
+  // /**
+  //  * @param int $offset
+  //  * @param int $rowcount
+  //  * @param null $sort
+  //  * @param bool $returnSQL
+  //  *
+  //  * @return string
+  //  */
+  // public function contactIDs($offset = 0, $rowcount = 0, $sort = NULL, $returnSQL = FALSE) {
+  //   return $this->all($offset, $rowcount, $sort, FALSE, TRUE);
+  // }
+
 
   /**
    * Construct a full SQL query which returns one page worth of results
@@ -101,7 +94,12 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @param bool $justIDs
    * @return string, sql
    */
-  function all($offset = 0, $rowcount = 0, $sort = NULL, $includeContactIDs = FALSE, $justIDs = FALSE) {
+  public function all($offset = 0, $rowcount = 0, $sort = NULL, $includeContactIDs = FALSE, $justIDs = FALSE) {
+    // This is the household contact so will group together
+    // Could do something more fancy if we want to sort alphabetically by household name
+    if (!$sort) {
+      $sort = "reln.contact_id_b";
+    }
     // delegate to $this->sql(), $this->select(), $this->from(), $this->where(), etc.
     return $this->sql($this->select($justIDs), $offset, $rowcount, $sort, $includeContactIDs, NULL);
   }
@@ -111,21 +109,20 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    *
    * @return string, sql fragment with SELECT arguments
    */
-  function select($justIDs) {
-	if($justIDs) {
-	  return "
-      contact_a.id           as contact_id  
+  public function select($justIDs) {
+    if ($justIDs) {
+      return "contact_a.id AS contact_id";
+    }
+    else {
+      return "
+        contact_a.id           AS contact_id,
+        contact_a.display_name AS display_name,
+        contact_a.contact_type AS contact_type,
+        contact_a.sort_name    AS sort_name,
+        address.street_address AS street_address,
+        address.city           AS city
     ";
-	} else {
-    return "
-      contact_a.id           as contact_id  ,
-	  contact_a.display_name as display_name,
-      contact_a.contact_type as contact_type,
-      contact_a.sort_name    as sort_name,
-      address.street_address as street_address,
-	  address.city			 as city
-    ";
-	}
+    }
   }
 
   /**
@@ -133,16 +130,36 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    *
    * @return string, sql fragment with FROM and JOIN clauses
    */
-  function from() {
-	// **************** The numbers in the flag fields are field Ids and will change.
-	// **************** Really needs more Joins to select by name.
+  public function from() {
+    static $flagtable, $hhmember;
+    // Do static lookups first to simplify real search
+    if (!$flagtable) {
+      $flagtable = civicrm_api3('CustomGroup', 'getvalue', [
+        'return' => "table_name",
+        'name' => "Household_Fields",
+      ]);
+      $flagtable = CRM_Utils_Type::escape($flagtable, 'String');
+    }
+    if (!$hhmember) {
+      $hhmember = civicrm_api3('RelationshipType', 'getvalue', [
+        'return' => "id",
+        'name_a_b' => "Household Member of",
+      ]);
+      $hhmember = CRM_Utils_Type::escape($hhmember, 'Int');
+    }
     return "
-      FROM      civicrm_contact 			AS contact_a
-      LEFT JOIN civicrm_address 			AS address 	ON address.contact_id = contact_a.id 
-      LEFT JOIN civicrm_email           				ON civicrm_email.contact_id = contact_a.id  
-      INNER JOIN civicrm_relationship 		AS reln 	ON reln.contact_id_a = contact_a.id
-	  INNER JOIN civicrm_relationship_type 	AS relntype	ON relntype.id = reln.relationship_type_id
-	  INNER JOIN civicrm_value_household_fie_8 AS flag  ON flag.entity_id = reln.contact_id_b	
+      FROM civicrm_contact                      AS contact_a
+      LEFT JOIN civicrm_address                 AS address
+        ON (address.contact_id = contact_a.id
+            AND address.is_primary = 1)
+      LEFT JOIN civicrm_email                   AS email
+        ON (email.contact_id = contact_a.id
+            AND email.is_primary = 1)
+      INNER JOIN civicrm_relationship           AS reln
+        ON (reln.contact_id_a = contact_a.id
+            AND reln.relationship_type_id = $hhmember)
+      INNER JOIN $flagtable                     AS flag
+        ON (flag.entity_id = reln.contact_id_b)
     ";
   }
 
@@ -152,13 +169,16 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @param bool $includeContactIDs
    * @return string, sql fragment with conditional expressions
    */
-  function where($includeContactIDs = FALSE) {
-	$where = " address.is_primary = 1 AND
-				civicrm_email.is_primary = 1 AND
-				relntype.name_a_b = 'Household Member of' AND
-				flag.printed_card_required_18 = 1";
-	
-	return $where;
+  public function where($includeContactIDs = FALSE) {
+    static $flagcolumn;
+    if (!$flagcolumn) {
+      $flagcolumn = civicrm_api3('CustomField', 'getvalue', [
+        'return' => "column_name",
+        'name' => "Printed_Card_Required",
+      ]);
+      $flagcolumn = CRM_Utils_Type::escape($flagcolumn, 'String');
+    }
+    return "flag.$flagcolumn = 1";
   }
 
   /**
@@ -166,7 +186,7 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    *
    * @return string, template path (findable through Smarty template path)
    */
-  function templateFile() {
+  public function templateFile() {
     return 'CRM/Contact/Form/Search/Custom.tpl';
   }
 
@@ -177,6 +197,7 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @return void
    */
   // function alterRow(&$row) {
-    // $row['sort_name'] .= ' ( altered )';
+  // $row['sort_name'] .= ' ( altered )';
   // }
+
 }
