@@ -1,6 +1,14 @@
 <?php
 
 class CRM_Lalgutils {
+
+  /**
+   * This function clears the print flag
+   * @param  mixed $cids Contact IDS - Array or comma seperated integers
+   * Note - these are the ids of people, not the households.
+   * We get the primary membership id, then the cid of the household
+   * that has the membership.
+   */
   public function clear_print_flag($cids) {
     static $printfield;
     if (!$printfield) {
