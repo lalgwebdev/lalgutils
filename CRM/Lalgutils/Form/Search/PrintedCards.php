@@ -14,20 +14,6 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    */
   public function __construct(&$formValues) {
     parent::__construct($formValues);
-
-    // if (!isset($formValues['state_province_id'])) {
-    //   $this->_stateID = CRM_Utils_Request::retrieve('stateID', 'Integer');
-    //   if ($this->_stateID) {
-    //     $formValues['state_province_id'] = $this->_stateID;
-    //   }
-    // }
-
-    // $this->_columns = [
-    //   E::ts('Contact Id') => 'contact_id',
-    //   E::ts('Name') => 'sort_name',
-    //   E::ts('Street Address') => 'street_address',
-    //   E::ts('City') => 'city',
-    // ];
   }
 
   /**
@@ -71,18 +57,17 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
     return $columns;
   }
 
-  // /**
-  //  * @param int $offset
-  //  * @param int $rowcount
-  //  * @param null $sort
-  //  * @param bool $returnSQL
-  //  *
-  //  * @return string
-  //  */
-  // public function contactIDs($offset = 0, $rowcount = 0, $sort = NULL, $returnSQL = FALSE) {
-  //   return $this->all($offset, $rowcount, $sort, FALSE, TRUE);
-  // }
-
+  /**
+   * @param int $offset
+   * @param int $rowcount
+   * @param null $sort
+   * @param bool $returnSQL
+   *
+   * @return string
+   */
+  public function contactIDs($offset = 0, $rowcount = 0, $sort = NULL, $returnSQL = FALSE) {
+    return $this->all($offset, $rowcount, $sort, FALSE, TRUE);
+  }
 
   /**
    * Construct a full SQL query which returns one page worth of results
@@ -97,9 +82,7 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
   public function all($offset = 0, $rowcount = 0, $sort = NULL, $includeContactIDs = FALSE, $justIDs = FALSE) {
     // This is the household contact so will group together
     // Could do something more fancy if we want to sort alphabetically by household name
-    if (!$sort) {
-      $sort = "reln.contact_id_b";
-    }
+    $sort = "reln.contact_id_b";
     // delegate to $this->sql(), $this->select(), $this->from(), $this->where(), etc.
     return $this->sql($this->select($justIDs), $offset, $rowcount, $sort, $includeContactIDs, NULL);
   }
@@ -111,7 +94,8 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    */
   public function select($justIDs) {
     if ($justIDs) {
-      return "contact_a.id AS contact_id";
+      // NB until PR13531 is merged, the 'as' must be lowercase in this next statement.
+      return "contact_a.id as contact_id";
     }
     else {
       return "
@@ -188,6 +172,24 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    */
   public function templateFile() {
     return 'CRM/Contact/Form/Search/Custom.tpl';
+  }
+
+  /**
+   * Modify the tasklist
+   *
+   * @FIXME seems kludgy - we add the task via hook_civicrm_searchTasks and then
+   * filter based on the name.  Seems that we should be able to directly
+   * specify the tasks.  The important bit is $key below.
+   */
+  public function buildTaskList($form) {
+    $tasks = parent::buildTaskList($form);
+    $newtasks = [];
+    foreach ($tasks as $key => $title) {
+      if ($title == 'LALG - Print Membership Cards') {
+        $newTasks[$key] = $title;
+      }
+    }
+    return $newTasks;
   }
 
   /**

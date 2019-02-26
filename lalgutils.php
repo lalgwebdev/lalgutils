@@ -168,7 +168,7 @@ function lalgutils_civicrm_navigationMenu(&$menu) {
 
 /************************************************************/
 /**
- * Implements hook_action_info()
+ * Implements hook_action_info().
  * Creates a Drupal Action to Complete a Pay Later Contribution (to be invoked by VBO).
  */
 function lalgutils_action_info() {
@@ -208,22 +208,37 @@ function lalgutils_complete_pay_later_contribution(&$entity, $context) {
 
 /************************************************************/
 /**
- * Adds the hook to Print Membership Cards
+ * Implements hook_civicrm_searchTasks().
+ * Adds task for printing membership cards
  */
-function lalgutils_civicrm_searchTasks( $objectName, &$tasks ){
-  // dpm($objectName, "object");
-  // dpm($tasks);
-  if($objectName == 'contact'){
+function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
+  if ($objectName == 'contact') {
     $tasks[] = [
       'title' => 'LALG - Print Membership Cards',
       'class' => 'CRM_Contact_Form_Task_LalgPrintCards'
     ];
   }
-//	dpm($tasks);
+}
+/**
+ * Implements hook_civicrm_buildForm().
+ * Adds js to our form
+ */
+function lalgutils_civicrm_buildForm($formName, &$form) {
+  if ($formName == "CRM_Contact_Form_Task_LalgPrintCards") {
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printcards.js');
+  }
 }
 
-// function lalgutils_civicrm_buildForm($formName, &$form) {
-//   dpm($formName, "formname");
-//   // dpm($form->get_template_vars(), "template vars");
-//   // dpm($form, "form");
-// }
+/**
+ * Implements hook_civicrm_postProcess().
+ * Clears the printing flag if the upload button
+ * (labelled "Download and clear flags") was used
+ */
+function lalgutils_civicrm_postProcess($formName, &$form) {
+  if ($formName == "CRM_Contact_Form_Task_LalgPrintCards") {
+    $buttonName = $form->controller->getButtonName();
+    if ($buttonName == '_qf_LalgPrintCards_upload') {
+      CRM_Lalgutils::clear_print_flag($form->_contactIds);
+    }
+  }
+}
