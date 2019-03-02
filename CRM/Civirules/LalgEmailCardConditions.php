@@ -3,7 +3,7 @@
 //*************************  Civirules Actions  *********************/
 
 /**
- * Action to clear the 'Send Email Membership Card' flag on a Membership entity
+ * Conditions applicable to the 'Send Email Membership Card' flag on a Membership entity
  * Used to tidy up after sending Email cards to online members
  */
 class CRM_Civirules_LalgEmailCardConditions extends CRM_Civirules_Condition {
