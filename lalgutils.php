@@ -167,45 +167,7 @@ function lalgutils_civicrm_navigationMenu(&$menu) {
 /************************************************************/
 
 /************************************************************/
-/**
- * Implements hook_action_info().
- * Creates a Drupal Action to Complete a Pay Later Contribution (to be invoked by VBO).
- */
-function lalgutils_action_info() {
-	dpm('Action Hook called');
-  return array(
-    'lalgutils_complete_pay_later_contribution' => array(
-      'type' => 'entity',
-      'label' => t('Complete payment for a Pending Contribution'),
-      'behavior' => array('changes_property'),
-      'configurable' => FALSE,
-      'vbo_configurable' => FALSE,
-      'triggers' => array('any'),
-    ),
-  );
-}
-
-/**
- * Carries out the Complete Payment Action
- */
-function lalgutils_complete_pay_later_contribution(&$entity, $context) {
-	dpm('VBO Action');
-	dpm($entity);
-	dpm($context);
-
-	if ($context['entity_type'] != 'civicrm_contribution' ) return;
-	if ($entity -> contribution_status != 'Pending' ) return;
-
-	dpm('VBO Completing the Contribution');
-	$result = civicrm_api3('Contribution', 'completetransaction', [
-		'id' => $entity -> contribution_id,
-		'total_amount' => $entity -> total_amount,
-		'financial_type' => 2,									// Membership Dues
-//		'payment_instrument' => 6,								// Not Tracked
-	]);
-	dpm($result);
-}
-
+// Batch Printing Membership Cards
 /************************************************************/
 /**
  * Implements hook_civicrm_searchTasks().

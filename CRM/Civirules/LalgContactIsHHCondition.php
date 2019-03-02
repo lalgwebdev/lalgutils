@@ -31,7 +31,7 @@ class CRM_Civirules_LalgContactIsHHCondition extends CRM_Civirules_Condition {
 	  try {	
 		// Check this is called on behalf of a Household, not Individual
 		$contactId = $triggerData->getContactId();
-	    dpm('Condition called for Id: ' . $contactId);
+	    //dpm('Condition called for Id: ' . $contactId);
 		$result = civicrm_api3('Contact', 'get', ['sequential' => 1, 'id' => $contactId,]);
 		$contact = $result['values'][0];
 		return $contact['contact_type'] == 'Household';
