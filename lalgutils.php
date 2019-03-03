@@ -168,6 +168,7 @@ function lalgutils_civicrm_navigationMenu(&$menu) {
 
 /************************************************************/
 // Batch Printing Membership Cards
+// Printing Mailing Labels
 /************************************************************/
 /**
  * Implements hook_civicrm_searchTasks().
@@ -179,6 +180,10 @@ function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
       'title' => 'LALG - Print Membership Cards',
       'class' => 'CRM_Contact_Form_Task_LalgPrintCards'
     ];
+    $tasks[] = [
+      'title' => 'LALG - Print Labels',
+      'class' => 'CRM_Contact_Form_Task_LalgPrintLabels'
+    ];
   }
 }
 /**
@@ -189,6 +194,9 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
   if ($formName == "CRM_Contact_Form_Task_LalgPrintCards") {
     Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printcards.js');
   }
+  if ($formName == "CRM_Contact_Form_Task_LalgPrintLabels") {
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printlables.js');
+  }  
 }
 
 /**
