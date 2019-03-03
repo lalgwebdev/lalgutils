@@ -195,8 +195,11 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
     Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printcards.js');
   }
   if ($formName == "CRM_Contact_Form_Task_LalgPrintLabels") {
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printlables.js');
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printlabels.js');
   }  
+  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=2" ) !== false) {
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchlabels.js');
+  }	  
 }
 
 /**
