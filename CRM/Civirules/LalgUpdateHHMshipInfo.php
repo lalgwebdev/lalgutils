@@ -74,7 +74,5 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 	  catch (Exception $e) {
 		dpm('LalgUpdateHHMshipInfo  Caught exception: '.  $e->getMessage());
 	  }
-	}
-	
-	  
+	}	  
 }
