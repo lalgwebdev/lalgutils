@@ -184,6 +184,10 @@ function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
       'title' => 'LALG - Print Labels',
       'class' => 'CRM_Contact_Form_Task_LalgPrintLabels'
     ];
+    $tasks[] = [
+      'title' => 'LALG - Delete Members',
+      'class' => 'CRM_Contact_Form_Task_LalgDeleteMembers'
+    ];
   }
 }
 /**
@@ -200,6 +204,9 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
   if (strpos($_SERVER['REQUEST_URI'], "lalgwf=2" ) !== false) {
     Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchlabels.js');
   }	  
+  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=3" ) !== false) {
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/deletemembers.js');
+  }	 
 }
 
 /**
