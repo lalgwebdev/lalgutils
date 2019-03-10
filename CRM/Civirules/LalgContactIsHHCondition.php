@@ -39,7 +39,5 @@ class CRM_Civirules_LalgContactIsHHCondition extends CRM_Civirules_Condition {
 	  catch (Exception $e) {
 		dpm('LalgEmailCardConditions  Caught exception: '.  $e->getMessage());
 	  }
-	}
-	
-	  
+	}	  
 }

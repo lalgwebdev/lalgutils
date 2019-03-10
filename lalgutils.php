@@ -167,12 +167,13 @@ function lalgutils_civicrm_navigationMenu(&$menu) {
 /************************************************************/
 
 /************************************************************/
-// Batch Printing Membership Cards
-// Printing Mailing Labels
+// General hooks relating to several functions 
+// 	Print Membership Cards
+//	Print Labels
 /************************************************************/
 /**
  * Implements hook_civicrm_searchTasks().
- * Adds task for printing membership cards
+ * Adds tasks for printing membership cards
  */
 function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
   if ($objectName == 'contact') {
@@ -209,6 +210,9 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
   }	 
 }
 
+/************************************************************/
+// Batch Printing Membership Cards
+/************************************************************/
 /**
  * Implements hook_civicrm_postProcess().
  * Clears the printing flag if the upload button
@@ -222,3 +226,5 @@ function lalgutils_civicrm_postProcess($formName, &$form) {
     }
   }
 }
+
+
