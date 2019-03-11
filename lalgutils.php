@@ -196,18 +196,15 @@ function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
  * Adds js to our form
  */
 function lalgutils_civicrm_buildForm($formName, &$form) {
-  if ($formName == "CRM_Contact_Form_Task_LalgPrintCards") {
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printcards.js');
-  }
-  if ($formName == "CRM_Contact_Form_Task_LalgPrintLabels") {
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printlabels.js');
-  }  
-  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=2" ) !== false) {
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchlabels.js');
-  }	  
-  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=3" ) !== false) {
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/deletemembers.js');
-  }	 
+	  if ($formName == "CRM_Contact_Form_Task_LalgPrintCards") {
+		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printcards.js');
+	  }
+	  if ($formName == "CRM_Contact_Form_Task_LalgPrintLabels") {
+		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printlabels.js');
+	  }  
+	  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=2" ) !== false) {
+		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchlabels.js');
+	  }	  
 }
 
 /************************************************************/

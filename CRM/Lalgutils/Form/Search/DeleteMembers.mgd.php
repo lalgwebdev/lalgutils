@@ -6,16 +6,14 @@
 return array (
   0 => 
   array (
-    'name' => 'CRM_Lalgutils_Form_Search_PrintedCards',
+    'name' => 'CRM_Lalgutils_Form_Search_DeleteMembers',
     'entity' => 'CustomSearch',
     'params' => 
     array (
       'version' => 3,
-      'label' => 'PrintedCards',
-      'description' => 'PrintedCards (lalgutils)',
-      'class_name' => 'CRM_Lalgutils_Form_Search_PrintedCards',
+      'label' => 'DeleteMembers',
+      'description' => 'DeleteMembers (lalgutils)',
+      'class_name' => 'CRM_Lalgutils_Form_Search_DeleteMembers',
     ),
   ),
 );
-
-
