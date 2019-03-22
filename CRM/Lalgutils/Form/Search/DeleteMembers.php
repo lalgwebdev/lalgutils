@@ -20,13 +20,11 @@ class CRM_Lalgutils_Form_Search_DeleteMembers extends CRM_Contact_Form_Search_Cu
     parent::__construct($formValues);
 
     $this->_columns = array(
-      '' => 'contact_type',
+      ts('  ') => 'contact_type',
       ts('Name') => 'sort_name',
       ts('Address') => 'street_address',
       ts('City') => 'city',
-      ts('State') => 'state_province',
-      ts('Postal') => 'postal_code',
-      ts('Country') => 'country',
+      ts('Postcode') => 'postal_code',
       ts('Email') => 'email',
     );
 
