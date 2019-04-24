@@ -29,29 +29,21 @@
 	// Check error handling
 	// Function to declare which triggers it works with
 	public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
+//		dpm('Autocomplete action triggerred');
 		try {
 			// Check this is called on behalf of a Contribution
 			$contribution = $triggerData -> getEntityData('contribution');
-			//		dpm($contribution);
+//					dpm($contribution);
 			if ($contribution) {
 				// Complete the Contribution
-							dpm('Completing the Contribution');
+//							dpm('Completing the Contribution');
 				$result = civicrm_api3('Contribution', 'completetransaction', [
 					'id' => $contribution['contribution_id'],
 					'total_amount' => $contribution['total_amount'],
 					'financial_type' => 2,					// Membership Dues
 					'payment_instrument' => [6],			// Not Tracked
 				]);
-							dpm($result);
-				
-				//Clear the Autocomplete Flag
-							dpm('Clear the Autocomplete Flag');
-				$result = civicrm_api3('CustomValue', 'create', [
-					'sequential' => 1,
-					'entity_id' => $contribution['contribution_id'],
-					'custom_Contribution_Flags:Autocomplete' => 0,
-				]);
-				//			dpm($result);
+//							dpm($result);
 			}
 		}
 		catch (Exception $e) {
