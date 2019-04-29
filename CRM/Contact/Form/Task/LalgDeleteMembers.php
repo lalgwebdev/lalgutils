@@ -37,7 +37,7 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 		// For each Relationship
 		$result = civicrm_api3('Relationship', 'get', [
 			'sequential' => 1,
-			'contact_id_b' => 240,
+			'contact_id_b' => $cid,
 		]);
 		// dpm($result);
 		foreach ($result['values'] as $reln) {
@@ -67,7 +67,7 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 		// Else For each Relationship
 		$result = civicrm_api3('Relationship', 'get', [
 			'sequential' => 1,
-			'contact_id_b' => 240,
+			'contact_id_b' => $hhId,
 		]);
 		// dpm($result);
 		foreach ($result['values'] as $reln) {
@@ -100,11 +100,13 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 		if ($cType == 'Household') {
 			// Cancel associated Membership
 			$memId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $cid, 'id', 'contact_id');
-			$result = civicrm_api3('Membership', 'create', [
-			  'id' => $memId,
-			  'status_id' => "Cancelled",
-			  'is_override' => 1,
-			]);
+			if($memId) {
+				$result = civicrm_api3('Membership', 'create', [
+				  'id' => $memId,
+				  'status_id' => "Cancelled",
+				  'is_override' => 1,
+				]);
+			}
 		} else {
 			// Block Drupal Account
 			try {
