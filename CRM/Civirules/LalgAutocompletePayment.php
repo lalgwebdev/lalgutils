@@ -34,6 +34,7 @@
 			// Check this is called on behalf of a Contribution
 			$contribution = $triggerData -> getEntityData('contribution');
 //					dpm($contribution);
+			sleep(5);
 			if ($contribution) {
 				// Complete the Contribution
 //							dpm('Completing the Contribution');
