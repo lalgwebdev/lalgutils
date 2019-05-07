@@ -4,6 +4,8 @@ INSERT INTO civirule_action (name, label, class_name, is_active)
 VALUES("lalg_autocomplete_payment", "LALG Autocomplete Payment", "CRM_Civirules_LalgAutocompletePayment", 1);
 INSERT INTO civirule_action (name, label, class_name, is_active) 
 VALUES("lalg_update_hh_mship_info", "LALG Update HH Mship Info", "CRM_Civirules_LalgUpdateHHMshipInfo", 1);
+INSERT INTO civirule_action (name, label, class_name, is_active) 
+VALUES("lalg_delete_dummy_email", "LALG Delete Dummy Emails", "CRM_Civirules_LalgDeleteDummyEmail", 1);
 
 INSERT INTO civirule_condition (name, label, class_name, is_active) 
 VALUES("lalg_email_card_conditions", "LALG Email Card Conditions", "CRM_Civirules_LalgEmailCardConditions", 1);

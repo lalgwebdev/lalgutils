@@ -2,9 +2,9 @@
 //*************************  Civirules Actions  *********************
 /**
  * Action to Autocomplete a 'Pay Later' payment on a new Contribution
- * Used when an Administrator creates a Membership via the Webform
- *   to avoid additional manual action
+ * DOES NOT WORK in this context since not all database updates have occurred.
  */
+ 
  class CRM_Civirules_LalgAutocompletePayment extends CRM_Civirules_Action {
 	 
 	/**
