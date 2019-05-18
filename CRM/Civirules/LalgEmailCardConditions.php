@@ -3,8 +3,8 @@
 //*************************  Civirules Actions  *********************/
 
 /**
- * Conditions applicable to the 'Send Email Membership Card' flag on a Membership entity
- * Used to tidy up after sending Email cards to online members
+ * Conditions applicable to the 'Send Email Membership' Activity 
+ * Checks the Send by Email flag is set.
  */
 class CRM_Civirules_LalgEmailCardConditions extends CRM_Civirules_Condition {
 
@@ -42,29 +42,24 @@ class CRM_Civirules_LalgEmailCardConditions extends CRM_Civirules_Condition {
 		// Check this is called on behalf of an Individual not a Household
 		$contactId = $triggerData->getContactId();
 	    //dpm('Email Card Condition called for Id: ' . $contactId);
-		$result = civicrm_api3('Contact', 'get', ['sequential' => 1, 'id' => $contactId,]);
+		$result = civicrm_api3('Contact', 'get', [
+			'sequential' => 1, 
+			'id' => $contactId,
+		]);
 		$contact = $result['values'][0];
 		if ($contact['contact_type'] != 'Individual') return FALSE;
 		
-		// Get the related Household Membership & Household Id
-		//dpm('Getting the related Household Membership');
-		$result = civicrm_api3('Membership', 'get', ['sequential' => 1, 'contact_id' => $contactId,]);
-		$membership = $result['values'][0];
-		$params = array('sequential' => 1, 'id' => $membership['owner_membership_id'],);
-		$result = civicrm_api3('Membership', 'get', $params);
-		$hhMembership = $result['values'][0];
-		//dpm($hhMembership);
-		$hhId = $hhMembership['contact_id'];
-		//dpm('HH Id: ' . $hhId);
-		
-		// Check that the Card Required flag is set.
-		//dpm('Checking that the Card Required flag is set');
-		$params = array('sequential' => 1, 'entity_id' => $hhId, 'return.Household_Fields:Email_Card_Required' => 1,);
-		$result = civicrm_api3('CustomValue', 'get', $params);
+		// Check that the Send Card by Email flag is set.
+		//dpm('Checking that the Send Card by Email flag is set');
+		$result = civicrm_api3('CustomValue', 'get', [
+			'sequential' => 1, 
+			'entity_id' => $contactId, 
+			'return.User_Fields:Send_Membership_Documents' => 1,
+		]);
 		//dpm($result);
 		if ($result['count'] == 0) return FALSE;
-		if ($result['values'][0]['0'] == 0) return FALSE;
-		
+		if ($result['values'][0]['0'] != 1) return FALSE;
+
 		//dpm('All OK');
 		return TRUE;
 	  } 
