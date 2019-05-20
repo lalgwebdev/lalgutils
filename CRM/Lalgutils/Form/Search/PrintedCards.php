@@ -3,7 +3,7 @@ use CRM_Lalgutils_ExtensionUtil as E;
 
 /**
  * ************  LALG Custome Search   ****************
- * Finds Individual Contacts whose Household has the 'Printed Card Required flag set.
+ * Finds Individual Contacts who have the 'Send Printed Card' flag set.
  */
 class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Custom_Base implements CRM_Contact_Form_Search_Interface {
 
@@ -120,7 +120,7 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
     if (!$flagtable) {
       $flagtable = civicrm_api3('CustomGroup', 'getvalue', [
         'return' => "table_name",
-        'name' => "Household_Fields",
+        'name' => "User_Fields",
       ]);
       $flagtable = CRM_Utils_Type::escape($flagtable, 'String');
     }
@@ -136,14 +136,11 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
       LEFT JOIN civicrm_address                 AS address
         ON (address.contact_id = contact_a.id
             AND address.is_primary = 1)
-      LEFT JOIN civicrm_email                   AS email
-        ON (email.contact_id = contact_a.id
-            AND email.is_primary = 1)
       INNER JOIN civicrm_relationship           AS reln
         ON (reln.contact_id_a = contact_a.id
             AND reln.relationship_type_id = $hhmember)
       INNER JOIN $flagtable                     AS flag
-        ON (flag.entity_id = reln.contact_id_b)
+        ON (flag.entity_id = contact_a.id)
     ";
   }
 
@@ -153,16 +150,16 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @param bool $includeContactIDs
    * @return string, sql fragment with conditional expressions
    */
-  public function where($includeContactIDs = FALSE) {
+  public function where($includeContactIDs = FALSE) {	  
     static $flagcolumn;
     if (!$flagcolumn) {
       $flagcolumn = civicrm_api3('CustomField', 'getvalue', [
         'return' => "column_name",
-        'name' => "Printed_Card_Required",
+        'name' => "send_membership_documents",
       ]);
       $flagcolumn = CRM_Utils_Type::escape($flagcolumn, 'String');
     }
-    return "flag.$flagcolumn = 1";
+    return "flag.$flagcolumn = 2";
   }
 
   /**
@@ -191,15 +188,5 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
     }
     return $newTasks;
   }
-
-  /**
-   * Modify the content of each row
-   *
-   * @param array $row modifiable SQL result row
-   * @return void
-   */
-  // function alterRow(&$row) {
-  // $row['sort_name'] .= ' ( altered )';
-  // }
 
 }

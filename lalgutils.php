@@ -170,10 +170,11 @@ function lalgutils_civicrm_navigationMenu(&$menu) {
 // General hooks relating to several functions 
 // 	Print Membership Cards
 //	Print Labels
+//	Delete members
 /************************************************************/
 /**
  * Implements hook_civicrm_searchTasks().
- * Adds tasks for printing membership cards
+ * Adds tasks for printing membership cards etc.
  */
 function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
   if ($objectName == 'contact') {
