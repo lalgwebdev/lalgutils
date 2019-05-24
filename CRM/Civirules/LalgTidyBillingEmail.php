@@ -31,7 +31,7 @@
 		try {	
 			// Get the Contact that called this action
 			$cid = $triggerData -> getEntityData('contact')['id'];			
-			//dpm('Tidy Email called for: ' . $cid);
+//			dpm('Tidy Billing Email called for: ' . $cid);
 			
 			// Get the attached Email Addresses
 			if ($cid) {
@@ -44,25 +44,32 @@
 			else {return;}
 				
 			// Find Home and Billing address
-			//dpm('Copying Billing to Home');
+//			dpm('Copying Billing to Home');
+			$billing = NULL;
+			$home = NULL;
 			foreach ($result['values'] as $email) {
-				if ($email['location_type_id'] == 1) {
-					$home = $email;
-				}
-				if ($email['location_type_id'] == 5) {
-					$billing = $email;
-				}
+				$locn = $email['location_type_id'];
+				if(!$locn) {$billing = $email;}			// Shows as Billing, but actually has no Location Type
+				if ($locn == 1) {$home = $email;}
+				if ($locn == 5) {$billing = $email;}
 			}
 			// If Billing and Not Home
-			if ($billing && !$home['email']) {
-				//dpm('Do the copy');
+			if (($billing && !$home) || ($billing && !$home['email'])) {
+//				dpm('Do the copy');
 				$result = civicrm_api3('Email', 'create', [
 				  'contact_id' => $cid,
 				  'email' => $billing['email'],
 				  'location_type_id' => "Home",
 				  'is_primary' => 1,
 				]);
-				//dpm($result);
+//				dpm($result);
+				// Delete the 'Billing' address if in fact temporary
+				if(!$locn) {						
+					$result = civicrm_api3('Email', 'delete', [
+					  'id' => $billing['id'],
+					]);
+				}
+//				dpm($result);
 			}			
 		}
 		catch (Exception $e) {
