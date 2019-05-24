@@ -114,7 +114,7 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 				  'sequential' => 1,
 				  'contact_id' => $cid,
 				]);
-				dpm($result);
+//				dpm($result);
 				$userId = $result['values'][0]['id'];
 				$empty = NULL;
 				user_block_user_action($empty , array('uid' => $userId));		// First param must be a variable
