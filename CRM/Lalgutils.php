@@ -6,15 +6,14 @@ class CRM_Lalgutils {
    * This function clears the print flag
    * @param  mixed $cids Contact IDS - Array or comma seperated integers
    * Note - these are the ids of people, not the households.
-   * We get the primary membership id, then the cid of the household
-   * that has the membership.
    */
   public function clear_print_flag($cids) {
+	// Get the id of the Send_Membership_Documents custom Field.  
     static $printfield;
     if (!$printfield) {
       $printfield = "custom_" . civicrm_api3('CustomField', 'getvalue', [
         'return' => "id",
-        'name' => "Printed_card_required",
+        'name' => "Send_Membership_Documents",
       ]);
     }
 
@@ -22,30 +21,12 @@ class CRM_Lalgutils {
       $cids = explode(",", $cids);
     }
 
-    // Get primary membership ids
-    $result = civicrm_api3('Membership', 'get', [
-      'sequential' => 1,
-      'contact_id' => ['IN' => $cids],
-      'return' => ["owner_membership_id"],
-    ]);
-    $mids = [];
-    foreach ($result['values'] as $membership) {
-      $mids[] = $membership['owner_membership_id'];
-    }
-
-    // Get contact ids of primary memberships
-    $result = civicrm_api3('Membership', 'get', [
-      'squential' => 1,
-      'id' => ['IN' => array_unique($mids)],
-      'return' => ["contact_id"],
-    ]);
-
     // Set printfield off
-    foreach ($result['values'] as $membership) {
+    foreach ($cids as $cid) {
       $result = civicrm_api3('Contact', 'create', [
         'sequential' => 1,
-        'id' => $membership['contact_id'],
-        $printfield => 0,
+        'id' => $cid,
+        $printfield => 3,				// 'None'
       ]);
     }
   }
