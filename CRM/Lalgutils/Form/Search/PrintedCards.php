@@ -159,7 +159,7 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
       ]);
       $flagcolumn = CRM_Utils_Type::escape($flagcolumn, 'String');
     }
-    return "flag.$flagcolumn = 2";
+    return "contact_a.is_deleted = 0 AND flag.$flagcolumn = 2";
   }
 
   /**
