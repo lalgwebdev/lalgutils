@@ -12,13 +12,13 @@ CRM.$(function($) {
 			var targetNode = $('iframe').contents().find('html')[0];
 //			console.log(targetNode);
 			if (targetNode) {
-				$('.crm-contact-task-pdf-form-block div.crm-accordion-wrapper').hide();
+				{setTimeout(() => $('.crm-contact-task-pdf-form-block div.crm-accordion-wrapper').hide(), 100);}
 				return;
 			}
 			if (rep > 0) {setTimeout(() => checkIframe(rep-1), 100);}
 		}
 	  
-	    checkIframe(100);
+	    checkIframe(500);
 	  	  
 	});
 });
