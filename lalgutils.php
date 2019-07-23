@@ -225,4 +225,17 @@ function lalgutils_civicrm_postProcess($formName, &$form) {
   }
 }
 
-
+/************************************************************/
+// LALG Custom Tokens
+/************************************************************/
+/**
+ * Implements hook_civicrm_tokens and hook_civicrm_tokenValues.
+ */
+function lalgutils_civicrm_tokens(&$tokens) {
+//dpm('hook_civicrm_tokens called');
+	CRM_Civitokens_Tokens::civicrm_tokens($tokens);
+}
+function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+//dpm('hook_civicrm_tokenValues called');
+	CRM_Civitokens_Tokens::civicrm_tokenValues($values, $cids, $job, $tokens, $context);
+}
