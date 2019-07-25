@@ -6,6 +6,7 @@ INSERT INTO civirule_action (name, label, class_name, is_active)
 VALUES("lalg_delete_dummy_email", "LALG Delete Dummy Emails", "CRM_Civirules_LalgDeleteDummyEmail", 1);
 INSERT INTO civirule_action (name, label, class_name, is_active) 
 VALUES("lalg_tidy_billing_email", "LALG Tidy Billing Email", "CRM_Civirules_LalgTidyBillingEmail", 1);
-
+INSERT INTO civirule_action (name, label, class_name, is_active) 
+VALUES("lalg_tidy_billing_address", "LALG Tidy Billing Address", "CRM_Civirules_LalgTidyBillingAddress", 1);
 
 
