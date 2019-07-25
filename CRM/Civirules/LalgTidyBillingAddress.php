@@ -40,6 +40,7 @@
 					'contact_id' => $cid,
 				]);
 //				dpm($result);
+				if ($result['count'] == 0) {return;}
 			} 
 			else {return;}
 				
@@ -56,18 +57,19 @@
 			// If Billing is Primary Location
 			if ($billing && $home) {
 				if (!$home['is_primary']) {
-//					dpm('Home is not Primary, so change it');
+//					dpm('Home is not Primary, so change it');				
 					$result = civicrm_api3('Address', 'create', [
 					  'id' => $home['id'],
 					  'is_primary' => 1,
 					]);
 				}
 			}
-			if (!billing['street_address'] && !billing['postal_code']) {
+			if ($billing && !isset(billing['street_address']) && !isset(billing['postal_code'])) {
 //					dpm('Billing empty, so delete it');						
 				$result = civicrm_api3('Address', 'delete', [
 				  'id' => $billing['id'],
 				]);
+//				dpm($result);
 			}
 						
 		}
