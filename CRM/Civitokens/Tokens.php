@@ -71,7 +71,7 @@ class CRM_Civitokens_Tokens {
 			// Get Membership record
 			$result = civicrm_api3('Membership', 'get', [
 				'sequential' => 1,
-				'id' => 157,
+				'id' => $membId, 
 			]);
 //dpm($result);
 			
