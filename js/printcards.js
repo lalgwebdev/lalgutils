@@ -6,19 +6,19 @@ CRM.$(function($) {
 	  $('#_qf_LalgPrintCards_upload-bottom').val('Download and clear flags');
 	  $('#_qf_LalgPrintCards_submit_preview-bottom').val('Download');
 
-	  $('.crm-contact-task-pdf-form-block table').hide();
+//	  $('.crm-contact-task-pdf-form-block table').hide();
 
-		function checkIframe (rep) {
-			var targetNode = $('iframe').contents().find('html')[0];
+		// function checkIframe (rep) {
+			// var targetNode = $('iframe').contents().find('html')[0];
 //			console.log(targetNode);
-			if (targetNode) {
-				{setTimeout(() => $('.crm-contact-task-pdf-form-block div.crm-accordion-wrapper').hide(), 100);}
-				return;
-			}
-			if (rep > 0) {setTimeout(() => checkIframe(rep-1), 100);}
-		}
+			// if (targetNode) {
+				// {setTimeout(() => $('.crm-contact-task-pdf-form-block div.crm-accordion-wrapper').hide(), 100);}
+				// return;
+			// }
+			// if (rep > 0) {setTimeout(() => checkIframe(rep-1), 100);}
+		// }
 	  
-	    checkIframe(500);
+// 	    checkIframe(500);
 	  	  
 	});
 });
