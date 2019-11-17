@@ -53,8 +53,8 @@
 		$result = civicrm_api3('CustomValue', 'create', [
 			'sequential' => 1, 
 			'entity_id' => $contactId, 
-			'custom_User_Fields:Send_Membership_Documents' => 3,
-		]);
+			'custom_User_Fields:Email_Membership_Receipt' => 0,
+		]); 
 		//dpm($result);
 	}
 	catch (Exception $e) {

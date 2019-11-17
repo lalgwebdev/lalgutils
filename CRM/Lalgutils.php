@@ -13,7 +13,7 @@ class CRM_Lalgutils {
     if (!$printfield) {
       $printfield = "custom_" . civicrm_api3('CustomField', 'getvalue', [
         'return' => "id",
-        'name' => "Send_Membership_Documents",
+        'name' => "Printed_Card_Required",
       ]);
     }
 
@@ -26,7 +26,7 @@ class CRM_Lalgutils {
       $result = civicrm_api3('Contact', 'create', [
         'sequential' => 1,
         'id' => $cid,
-        $printfield => 3,				// 'None'
+        $printfield => 0,				// 'None'
       ]);
     }
   }

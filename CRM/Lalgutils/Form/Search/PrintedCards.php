@@ -155,11 +155,11 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
     if (!$flagcolumn) {
       $flagcolumn = civicrm_api3('CustomField', 'getvalue', [
         'return' => "column_name",
-        'name' => "send_membership_documents",
+        'name' => "printed_card_required",
       ]);
       $flagcolumn = CRM_Utils_Type::escape($flagcolumn, 'String');
     }
-    return "contact_a.is_deleted = 0 AND flag.$flagcolumn = 2";
+    return "contact_a.is_deleted = 0 AND flag.$flagcolumn = 1";
   }
 
   /**
