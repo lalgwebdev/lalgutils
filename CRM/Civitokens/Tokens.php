@@ -13,7 +13,6 @@ class CRM_Civitokens_Tokens {
 */
 	public function civicrm_tokens(&$tokens) {
 		$tokens['paylater'] = array(
-			'paylater.membership_type' => 'Pay Later - Membership Type',
 			'paylater.membership_fee' => 'Pay Later - Membership Fee',
 		);
 	}
@@ -49,36 +48,11 @@ class CRM_Civitokens_Tokens {
 			// Get last result if more than one
 			foreach ($result['values'] as $contrib) {
 				$contribId = $contrib['contribution_id'];
+			// Set return value
+				$values[$cid]['paylater.membership_fee'] = $contrib['total_amount'];
 			}
 //dpm($result);			
 			
-			
-			// Get related Line Items
-			$result = civicrm_api3('LineItem', 'get', [
-				'sequential' => 1,
-				'contribution_id' => $contribId,
-				'entity_table' => "civicrm_membership",
-			]);
-			if (empty($result['values'])) {
-				CRM_Core_Session::setStatus('Cannot find Pending Membership for Contact Reference ' . $cid . '. Skipped.',
-											'Warning');
-				continue;						// Move to next Contact
-			}
-			$membFee = $result['values'][0]['unit_price'];
-			$membId = $result['values'][0]['entity_id'];
-//dpm($result);
-			
-			// Get Membership record
-			$result = civicrm_api3('Membership', 'get', [
-				'sequential' => 1,
-				'id' => $membId, 
-			]);
-//dpm($result);
-			
-			// Set return values
-			$values[$cid]['paylater.membership_type'] = $result['values'][0]['membership_name']; 
-			$values[$cid]['paylater.membership_fee'] = $membFee;
-//dpm($values);  
 		}   
 	}	
 }

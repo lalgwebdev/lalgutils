@@ -1,4 +1,4 @@
-<?php
+ <?php
 use CRM_Lalgutils_ExtensionUtil as E;
 
 /**
@@ -115,15 +115,8 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @return string, sql fragment with FROM and JOIN clauses
    */
   public function from() {
-    static $flagtable, $hhmember;
+    static $hhmember;
     // Do static lookups first to simplify real search
-    if (!$flagtable) {
-      $flagtable = civicrm_api3('CustomGroup', 'getvalue', [
-        'return' => "table_name",
-        'name' => "User_Fields",
-      ]);
-      $flagtable = CRM_Utils_Type::escape($flagtable, 'String');
-    }
     if (!$hhmember) {
       $hhmember = civicrm_api3('RelationshipType', 'getvalue', [
         'return' => "id",
@@ -139,8 +132,8 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
       INNER JOIN civicrm_relationship           AS reln
         ON (reln.contact_id_a = contact_a.id
             AND reln.relationship_type_id = $hhmember)
-      INNER JOIN $flagtable                     AS flag
-        ON (flag.entity_id = contact_a.id)
+      INNER JOIN civicrm_entity_tag             AS tag
+        ON (entity_id = contact_a.id)
     ";
   }
 
@@ -151,15 +144,15 @@ class CRM_Lalgutils_Form_Search_PrintedCards extends CRM_Contact_Form_Search_Cus
    * @return string, sql fragment with conditional expressions
    */
   public function where($includeContactIDs = FALSE) {	  
-    static $flagcolumn;
-    if (!$flagcolumn) {
-      $flagcolumn = civicrm_api3('CustomField', 'getvalue', [
-        'return' => "column_name",
-        'name' => "printed_card_required",
+    static $tagid;
+	if (!$tagid) {
+      $tagid = civicrm_api3('Tag', 'getvalue', [
+        'return' => "id",
+        'name' => "Print Card",
       ]);
-      $flagcolumn = CRM_Utils_Type::escape($flagcolumn, 'String');
+      $tagid = CRM_Utils_Type::escape($tagid, 'Int');
     }
-    return "contact_a.is_deleted = 0 AND flag.$flagcolumn = 1";
+    return "contact_a.is_deleted = 0 AND tag.tag_id = $tagid";
   }
 
   /**

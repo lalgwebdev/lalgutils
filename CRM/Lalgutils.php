@@ -9,25 +9,25 @@ class CRM_Lalgutils {
    */
   public function clear_print_flag($cids) {
 	// Get the id of the Send_Membership_Documents custom Field.  
-    static $printfield;
-    if (!$printfield) {
-      $printfield = "custom_" . civicrm_api3('CustomField', 'getvalue', [
+    static $tagid;
+    if (!$tagid) {
+      $tagid = civicrm_api3('Tag', 'getvalue', [
         'return' => "id",
-        'name' => "Printed_Card_Required",
+        'name' => "Print Card",
       ]);
+      $tagid = CRM_Utils_Type::escape($tagid, 'Int');
     }
 
     if (!is_array($cids)) {
       $cids = explode(",", $cids);
     }
-
-    // Set printfield off
+	
     foreach ($cids as $cid) {
-      $result = civicrm_api3('Contact', 'create', [
-        'sequential' => 1,
-        'id' => $cid,
-        $printfield => 0,				// 'None'
-      ]);
+		// Set printfield off
+		$result = civicrm_api3('EntityTag', 'delete', [
+		  'tag_id' => $tagid,
+		  'entity_id' => $cid,
+		]);
     }
   }
 
