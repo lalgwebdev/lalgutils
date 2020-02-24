@@ -3,7 +3,7 @@
 class CRM_Lalgutils {
 
   /**
-   * This function clears the print flag
+   * This function clears the print flag and creates an Activity to record the print.
    * @param  mixed $cids Contact IDS - Array or comma seperated integers
    * Note - these are the ids of people, not the households.
    */
@@ -28,6 +28,15 @@ class CRM_Lalgutils {
 		  'tag_id' => $tagid,
 		  'entity_id' => $cid,
 		]);
+		// Create Activity
+		$result = civicrm_api3('Activity', 'create', [
+//		  'source_contact_id' => "user_contact_id",
+		  'activity_type_id' => "Print Membership Card",
+		  'status_id' => "Completed",
+		  'target_id' => $cid,
+		  'subject' => "LALG Membership Card",
+		]);
+		dpm($result);
     }
   }
 
