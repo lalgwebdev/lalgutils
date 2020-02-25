@@ -31,12 +31,12 @@ class CRM_Lalgutils {
 		// Create Activity
 		$result = civicrm_api3('Activity', 'create', [
 //		  'source_contact_id' => "user_contact_id",
-		  'activity_type_id' => "Print Membership Card",
-		  'status_id' => "Completed",
+		  'activity_type_id' => 55,				// "Print Membership Card",
+		  'status_id' => 2,						// "Completed",
 		  'target_id' => $cid,
 		  'subject' => "LALG Membership Card",
 		]);
-		dpm($result);
+//		dpm($result);
     }
   }
 
