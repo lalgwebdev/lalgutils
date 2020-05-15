@@ -239,3 +239,21 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
 //dpm('hook_civicrm_tokenValues called');
 	CRM_Civitokens_Tokens::civicrm_tokenValues($values, $cids, $job, $tokens, $context);
 }
+
+
+/************************************************************/
+// TESTING ONLY
+/************************************************************/
+// function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
+	// if ($objectName == 'EntityTag') {
+		// dpm($op . '  :  ' . $id);
+		// dpm($params);
+		
+		  // $trace = debug_backtrace();
+		  // $backtrace_lite = array();
+		  // foreach( $trace as $call ) {
+			// $backtrace_lite[] = $call['function']."    ".$call['file']."    line ".$call['line'];
+		  // }
+		  // debug( $backtrace_lite, "TRACE", true );
+	// }
+// }

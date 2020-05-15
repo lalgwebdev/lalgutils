@@ -15,6 +15,9 @@ class CRM_Civitokens_Tokens {
 		$tokens['paylater'] = array(
 			'paylater.membership_fee' => 'Pay Later - Membership Fee',
 		);
+		$tokens['activity'] = array(
+			'activity.scheduled_reminder' => 'Activity - Latest Scheduled Reminder',
+		);
 	}
 	
 /** 
@@ -27,32 +30,57 @@ class CRM_Civitokens_Tokens {
 	public function civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
 //dpm($cids);
 //dpm($tokens);
-		// Exit if Pay Later tokens not wanted
-		if (empty($tokens['paylater'])) {return;}
-   
- //   civicrm_initialize();
+		// Pay Later tokens if these are required
+		if (!empty($tokens['paylater'])) {  
 		// Cycle through the Contacts list
-		foreach ($cids as $cid) {
-			// Get Pending Contributions
-				
-			$result = civicrm_api3('Contribution', 'get', [
-			  'sequential' => 1,
-			  'contact_id' => $cid,
-			  'contribution_status_id' => 2, 	// Pending
-			]);
-			if (empty($result['values'])) {
-				CRM_Core_Session::setStatus('Contact Reference ' . $cid . ' has no Pending Contribution. Skipped.',
-											'Warning');
-				continue;						// Move to next Contact
+			foreach ($cids as $cid) {
+				// Get Pending Contributions
+					
+				$result = civicrm_api3('Contribution', 'get', [
+				  'sequential' => 1,
+				  'contact_id' => $cid,
+				  'contribution_status_id' => 2, 	// Pending
+				]);
+				if (empty($result['values'])) {
+					CRM_Core_Session::setStatus('Contact Reference ' . $cid . ' has no Pending Contribution. Skipped.',
+												'Warning');
+					continue;						// Move to next Contact
+				}
+				// Get last result if more than one
+				foreach ($result['values'] as $contrib) {
+					$contribId = $contrib['contribution_id'];
+				// Set return value
+					$values[$cid]['paylater.membership_fee'] = $contrib['total_amount'];
+				}
+	//dpm($result);				
 			}
-			// Get last result if more than one
-			foreach ($result['values'] as $contrib) {
-				$contribId = $contrib['contribution_id'];
-			// Set return value
-				$values[$cid]['paylater.membership_fee'] = $contrib['total_amount'];
+		}
+		
+		// Activity tokens if these are required
+		if (!empty($tokens['activity'])) {  
+		// Cycle through the Contacts list
+			foreach ($cids as $cid) {
+				// Get associated Activities
+				$result = civicrm_api3('Activity', 'get', [
+				  'sequential' => 1,
+				  'target_contact_id' => $cid,
+				  'activity_type_id' => "Send Postal Reminder",
+				  'status_id' => "Scheduled",
+				]);
+//dpm($result);
+				if (empty($result['values'])) {
+					CRM_Core_Session::setStatus('Contact Reference ' . $cid . ' has no Scheduled Reminder. Skipped.',
+												'Warning');
+					continue;						// Move to next Contact
+				}
+				// Get last result if more than one
+				foreach ($result['values'] as $activity) {
+				// Set return value
+					$values[$cid]['activity.scheduled_reminder'] = $activity['subject'];
+				}
+//dpm($values);
 			}
-//dpm($result);			
-			
-		}   
+		}
+		
 	}	
 }
