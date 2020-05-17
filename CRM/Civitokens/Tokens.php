@@ -64,7 +64,7 @@ class CRM_Civitokens_Tokens {
 				$result = civicrm_api3('Activity', 'get', [
 				  'sequential' => 1,
 				  'target_contact_id' => $cid,
-				  'activity_type_id' => "Send Postal Reminder",
+				  'activity_type_id' => "Print Postal Reminder",
 				  'status_id' => "Scheduled",
 				]);
 //dpm($result);

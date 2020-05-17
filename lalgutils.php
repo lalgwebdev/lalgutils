@@ -206,6 +206,9 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
 	  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=2" ) !== false) {
 		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchlabels.js');
 	  }	  
+	  if (strpos($_SERVER['REQUEST_URI'], "civicrm/dataprocessor_activity_search/membership_postal_reminders" ) !== false) {
+		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchreminders.js');
+	  }	
 }
 
 /************************************************************/
