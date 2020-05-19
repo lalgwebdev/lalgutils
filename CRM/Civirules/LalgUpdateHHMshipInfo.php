@@ -39,7 +39,7 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		//dpm('Getting the related Household Membership');
 		$result = civicrm_api3('Membership', 'get', ['sequential' => 1, 'contact_id' => $contactId,]);
 		$membership = $result['values'][0];
-		//dpm($membership);
+//dpm($membership);
 		
 		// Format Membership Expiry Date
 		$endDate = DateTime::createFromFormat('Y-m-d', $membership['end_date']);
@@ -58,7 +58,7 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		  'sequential' => 1,
 		  'id' => $membership['status_id'],
 		]);
-		//dpm($result);
+//dpm($result);
 		$status = $result['values'][0];
 		if(!$status['is_current_member']) {
 			$membershipType = $status['label'];
@@ -69,6 +69,12 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		  'entity_id' => $contactId, 
 		  'custom_Household_Fields:Membership_Type' => $membershipType,
 		]);
+		
+		// Set Membership Status custom field
+		$result = civicrm_api3('CustomValue', 'create', [
+		  'entity_id' => $contactId, 
+		  'custom_Household_Fields:Membership_Status' => $status['label'],
+		]);		
 		
 	  } 
 	  catch (Exception $e) {
