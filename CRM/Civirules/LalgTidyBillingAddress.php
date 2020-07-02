@@ -31,7 +31,7 @@
 		try {	
 			// Get the Contact that called this action
 			$cid = $triggerData -> getEntityData('contact')['id'];			
-			dpm('Tidy Billing Address called for: ' . $cid);
+//			dpm('Tidy Billing Address called for: ' . $cid);
 			
 			// Get the attached Addresses
 			if ($cid) {
