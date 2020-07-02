@@ -39,7 +39,7 @@
 					'sequential' => 1,
 					'contact_id' => $cid,
 				]);
-				dpm($result);
+//				dpm($result);
 				if ($result['count'] == 0) {return;}
 			} 
 			else {return;}
