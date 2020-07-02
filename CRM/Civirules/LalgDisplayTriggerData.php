@@ -25,4 +25,6 @@
   public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
 	dpm($triggerData);
   }
+  
 }
+

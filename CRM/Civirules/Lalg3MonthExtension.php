@@ -36,6 +36,7 @@ class CRM_Civirules_Lalg3MonthExtension extends CRM_Civirules_Action {
 	 *
 	 */
 	public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
+
 	  try {	
 		// Get Individual Contact Id
 		$cid = $triggerData->getContactId();
@@ -80,5 +81,7 @@ class CRM_Civirules_Lalg3MonthExtension extends CRM_Civirules_Action {
 	  catch (Exception $e) {
 		dpm('LalgUpdateHHMshipInfo  Caught exception: '.  $e->getMessage());
 	  }
+	
 	}	  
-}
+}		
+

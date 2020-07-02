@@ -31,7 +31,7 @@
 		try {	
 			// Get the Contact that called this action
 			$cid = $triggerData -> getEntityData('contact')['id'];			
-//			dpm('Tidy Billing Email called for: ' . $cid);
+			dpm('Tidy Billing Address called for: ' . $cid);
 			
 			// Get the attached Addresses
 			if ($cid) {
@@ -39,7 +39,7 @@
 					'sequential' => 1,
 					'contact_id' => $cid,
 				]);
-//				dpm($result);
+				dpm($result);
 				if ($result['count'] == 0) {return;}
 			} 
 			else {return;}
@@ -57,14 +57,14 @@
 			// If Billing is Primary Location
 			if ($billing && $home) {
 				if (!$home['is_primary']) {
-//					dpm('Home is not Primary, so change it');				
+					dpm('Home is not Primary, so change it');				
 					$result = civicrm_api3('Address', 'create', [
 					  'id' => $home['id'],
 					  'is_primary' => 1,
 					]);
 				}
 			}
-			if ($billing && !isset(billing['street_address']) && !isset(billing['postal_code'])) {
+			if ($billing && !isset($billing['street_address']) && !isset($billing['postal_code'])) {
 //					dpm('Billing empty, so delete it');						
 				$result = civicrm_api3('Address', 'delete', [
 				  'id' => $billing['id'],

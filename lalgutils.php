@@ -243,20 +243,100 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
 	CRM_Civitokens_Tokens::civicrm_tokenValues($values, $cids, $job, $tokens, $context);
 }
 
+/************************************************************/
+// LALG Three Month Extension 
+/************************************************************/
+/**
+ * Pre-hook checks Membership details and adds 3 months to end date if appropriate.
+ */
+function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
+//	if ($objectName == 'Membership') {
+// dpm($op . ':  ' . $objectName);
+// dpm('Id:  ' . $id);
+// dpm($params);
+//	}
+	
+	// Only proceed if this is a Membership Edit
+	if ($objectName != 'Membership' || $op != 'edit') { return; }
+	
+	$contact = civicrm_api3('Contact', 'getsingle', [
+		'id' => $params['contact_id'],
+	]);
+		
+	// Only proceed if this is the Household Contact
+	if ($contact["contact_type"] != "Household") { return; }
+	
+	// Check Membership Type and Status
+	$mType = $params['membership_type_id'];
+	if ($mType != '7' && $mType != '8') { return; }			// Must be Membership OR With Newsletter
+	$mStatus = $params['status_id'];
+	if ($mStatus != '1' && $mStatus != '2') { return; }		// Must be New OR Current
+	
+	// Get First Related Individual Contact
+	$result = civicrm_api3('Relationship', 'get', [
+	  'sequential' => 1,
+	  'contact_id_b' => $params['contact_id'],
+	  'relationship_type_id' => 8,
+	]);
+	$cid = $result['values'][0]['contact_id_a'];
 
+	// Get Tags for the Contact
+	$result = civicrm_api3('EntityTag', 'get', [
+		'sequential' => 1,
+		'entity_table' => "civicrm_contact",
+		'entity_id' => $cid,
+	]);
+	$found = false;
+	foreach ($result['values'] as $tag){ 
+		if ($tag['tag_id'] == '13') { $found = true; }		// Look for 'Membership Requested'		
+	}
+	if (!$found) { return; }
+	
+	// Get the Latest Membership Action
+	$result = civicrm_api3('CustomValue', 'getsingle', [
+		'sequential' => 1,
+		'entity_id' => $cid,
+		'return.custom_30' => 1
+	]);
+	if ($result['latest'] != '2') { return; }				// Value 2 = 'Renew'.  Exit otherwise.
+	
+	// Check still within the agreed period.
+	if (date("Y-m-d") > "2021-04-30") { return;	}
+		
+	// Change End Date
+	$newDate = strtotime($params['end_date']);
+	$newDate = strtotime("+3 Months", $newDate);;
+	$params['end_date'] = date("Ymd", $newDate);
+
+}	
+ 
 /************************************************************/
 // TESTING ONLY
 /************************************************************/
 // function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-	// if ($objectName == 'EntityTag') {
-		// dpm($op . '  :  ' . $id);
+		// dpm('Pre ' . $op . '  :  ' . $objectName);
+	// if ($objectName == 'Individual' || $objectName == 'Contribution') {
 		// dpm($params);
-		
 		  // $trace = debug_backtrace();
 		  // $backtrace_lite = array();
 		  // foreach( $trace as $call ) {
 			// $backtrace_lite[] = $call['function']."    ".$call['file']."    line ".$call['line'];
 		  // }
-		  // debug( $backtrace_lite, "TRACE", true );
+		  // debug( $backtrace_lite, "TRACE Pre: " . $op . ' ' . $objectName, true );		  
 	// }
 // }
+
+// function lalgutils_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+		// dpm('Post ' . $op . '  :  ' . $objectName);
+		  // $trace = debug_backtrace();
+		  // $backtrace_lite = array();
+		  // foreach( $trace as $call ) {
+			// $backtrace_lite[] = $call['function']."    ".$call['file']."    line ".$call['line'];
+		  // }
+		  // debug( $backtrace_lite, "TRACE Post: " . $op . ' ' . $objectName, true );
+// }
+
+
+
+
+

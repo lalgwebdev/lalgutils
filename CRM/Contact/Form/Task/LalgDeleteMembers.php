@@ -102,12 +102,15 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 			$memId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $cid, 'id', 'contact_id');
 			if($memId) {
 				$result = civicrm_api3('Membership', 'create', [
+				  'contact_id' => $cid,
 				  'id' => $memId,
 				  'status_id' => "Cancelled",
 				  'is_override' => 1,
 				]);
 			}
-		} else {
+		}
+
+		else {
 			// Block Drupal Account
 			try {
 				$result = civicrm_api3('User', 'get', [
@@ -116,17 +119,14 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 				]);
 //				dpm($result);
 				$userId = $result['values'][0]['id'];
-				$empty = NULL;
-				user_block_user_action($empty , array('uid' => $userId));		// First param must be a variable
+				if ($userId) {
+					$empty = NULL;
+					user_block_user_action($empty , array('uid' => $userId));		// First param must be a variable
+				}
 			}
 			catch (Exception $e) {
 				// Throws error if no User, so ignore it
 			}
-			// if ($result['count'] == 1) {							// If Drupal account exists
-				// $userId = $result['values'][0]['id'];
-				// $empty = NULL;
-				// user_block_user_action($empty , array('uid' => $userId));		// First param must be a variable
-			// }
 		}
 	}
 	parent::postProcess();
