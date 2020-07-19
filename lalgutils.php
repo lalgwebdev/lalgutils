@@ -250,11 +250,11 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
  * Pre-hook checks Membership details and adds 3 months to end date if appropriate.
  */
 function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-//	if ($objectName == 'Membership') {
+	// if ($objectName == 'Membership') {
 // dpm($op . ':  ' . $objectName);
 // dpm('Id:  ' . $id);
 // dpm($params);
-//	}
+	// }
 	
 	// Only proceed if this is a Membership Edit
 	if ($objectName != 'Membership' || $op != 'edit') { return; }
@@ -300,11 +300,10 @@ function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
 	]);
 	if ($result['latest'] != '2') { return; }				// Value 2 = 'Renew'.  Exit otherwise.
 	
-	// Check still within the agreed period.
-	if (date("Y-m-d") > "2021-04-30") { return;	}
-		
-	// Change End Date
+	// Check still within the agreed period.  Unextended end date must be <= 30th June 2021.
 	$newDate = strtotime($params['end_date']);
+	if (date("Y-m-d", $newDate) > "2022-06-30") { return; }
+	// Change End Date
 	$newDate = strtotime("+3 Months", $newDate);;
 	$params['end_date'] = date("Ymd", $newDate);
 
