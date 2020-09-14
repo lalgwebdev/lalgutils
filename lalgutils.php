@@ -250,11 +250,6 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
  * Pre-hook checks Membership details and adds 3 months to end date if appropriate.
  */
 function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-	// if ($objectName == 'Membership') {
-// dpm($op . ':  ' . $objectName);
-// dpm('Id:  ' . $id);
-// dpm($params);
-	// }
 	
 	// Only proceed if this is a Membership Edit
 	if ($objectName != 'Membership' || $op != 'edit') { return; }
@@ -308,34 +303,3 @@ function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
 	$params['end_date'] = date("Ymd", $newDate);
 
 }	
- 
-/************************************************************/
-// TESTING ONLY
-/************************************************************/
-// function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-		// dpm('Pre ' . $op . '  :  ' . $objectName);
-	// if ($objectName == 'Individual' || $objectName == 'Contribution') {
-		// dpm($params);
-		  // $trace = debug_backtrace();
-		  // $backtrace_lite = array();
-		  // foreach( $trace as $call ) {
-			// $backtrace_lite[] = $call['function']."    ".$call['file']."    line ".$call['line'];
-		  // }
-		  // debug( $backtrace_lite, "TRACE Pre: " . $op . ' ' . $objectName, true );		  
-	// }
-// }
-
-// function lalgutils_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-		// dpm('Post ' . $op . '  :  ' . $objectName);
-		  // $trace = debug_backtrace();
-		  // $backtrace_lite = array();
-		  // foreach( $trace as $call ) {
-			// $backtrace_lite[] = $call['function']."    ".$call['file']."    line ".$call['line'];
-		  // }
-		  // debug( $backtrace_lite, "TRACE Post: " . $op . ' ' . $objectName, true );
-// }
-
-
-
-
-
