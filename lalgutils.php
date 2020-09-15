@@ -250,16 +250,17 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
  * Pre-hook checks Membership details and adds 3 months to end date if appropriate.
  */
 function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-	
+
+//return;  // Till the getsingle is fixed.
+
 	// Only proceed if this is a Membership Edit
 	if ($objectName != 'Membership' || $op != 'edit') { return; }
 	
-	$contact = civicrm_api3('Contact', 'getsingle', [
-		'id' => $params['contact_id'],
-	]);
-		
 	// Only proceed if this is the Household Contact
-	if ($contact["contact_type"] != "Household") { return; }
+	$membership = civicrm_api3('Membership', 'getsingle', [
+		'id' => $id,
+	]);	
+	if (isset($membership["owner_membership_id"])) { return; }
 	
 	// Check Membership Type and Status
 	$mType = $params['membership_type_id'];
