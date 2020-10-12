@@ -209,6 +209,9 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
 	  if (strpos($_SERVER['REQUEST_URI'], "civicrm/dataprocessor_activity_search/membership_postal_reminders" ) !== false) {
 		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchreminders.js');
 	  }	
+	  if (strpos($_SERVER['REQUEST_URI'], "civicrm/dataprocessor_contact_search/delete_members" ) !== false) {
+		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/deletemembers.js');
+	  }
 }
 
 /************************************************************/
@@ -250,8 +253,6 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
  * Pre-hook checks Membership details and adds 3 months to end date if appropriate.
  */
 function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-
-//return;  // Till the getsingle is fixed.
 
 	// Only proceed if this is a Membership Edit
 	if ($objectName != 'Membership' || $op != 'edit') { return; }
