@@ -16,7 +16,7 @@ class CRM_Contact_Form_Task_LalgDeleteMembers extends CRM_Contact_Form_Task_Dele
 // Set Form Title
   public function buildQuickForm() {
     parent::buildQuickForm();
-    CRM_Utils_System::setTitle('Delete Members');
+    CRM_Utils_System::setTitle('Cancel Members');
   }
 
 /**
