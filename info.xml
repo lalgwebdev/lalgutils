@@ -15,12 +15,12 @@
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
   </urls>
   <releaseDate>2018-11-30</releaseDate>
-  <version>0.1</version>
-  <develStage>alpha</develStage>
+  <version>0.2-dev</version>
+  <develStage>beta</develStage>
   <compatibility>
-    <ver>5.0</ver>
+    <ver>5.31</ver>
   </compatibility>
-  <comments>This is a new, undeveloped module</comments>
+  <comments>This module is under continuous development</comments>
   <civix>
     <namespace>CRM/Lalgutils</namespace>
   </civix>
