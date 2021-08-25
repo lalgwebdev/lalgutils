@@ -1,11 +1,8 @@
 <?php
 //*************************  Civirules Actions  *********************
 /**
- * Action to tidy up (postal) Billing Address Fields when Contact is created.
- * There is a webform bug which creates a Billing Address as the Primary Location (if payment by card, cash or Cheque)
- *     in addition to the Home address which is shared from the Household.
- * So, if Billing Address is primary then make Home primary instead.
- * Also if Billing Address is empty (cash or cheque) then delete it.
+ * Action to tidy up (postal) Billing Address Fields after card payment.
+ * Stripe payment leaves the billing address Null, rather than absent, confuses some test code.
  */
  class CRM_Civirules_LalgTidyBillingAddress extends CRM_Civirules_Action {
 	 
@@ -20,7 +17,7 @@
 	
 	/**
 	* Method processAction to execute the action
-	* Triggered by a Contact being added or changed.
+	* Triggered by a Membership being added or changed.
 	*
 	* @param CRM_Civirules_TriggerData_TriggerData $triggerData	* @access public
 	*/
@@ -30,8 +27,9 @@
 	public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
 		try {	
 			// Get the Contact that called this action
-			$cid = $triggerData -> getEntityData('contact')['id'];			
-//			dpm('Tidy Billing Address called for: ' . $cid);
+			$cid = $triggerData -> getContactId();
+
+//dpm('Tidy Billing Address called for: ' . $cid);
 			
 			// Get the attached Addresses
 			if ($cid) {
@@ -39,38 +37,22 @@
 					'sequential' => 1,
 					'contact_id' => $cid,
 				]);
-//				dpm($result);
+//dpm($result);
 				if ($result['count'] == 0) {return;}
 			} 
 			else {return;}
-				
-			// Find Home and Billing address
-//			dpm('Checking Addresses');
-			$billing = NULL;
-			$home = NULL;
-			foreach ($result['values'] as $address) {
-				$locn = $address['location_type_id'];
-				if ($locn == 1) {$home = $address;}
-				if ($locn == 5) {$billing = $address;}
-			}
 			
-			// If Billing is Primary Location
-			if ($billing && $home) {
-				if (!$home['is_primary']) {
-					dpm('Home is not Primary, so change it');				
-					$result = civicrm_api3('Address', 'create', [
-					  'id' => $home['id'],
-					  'is_primary' => 1,
+			// Delete Billing addresses
+			// Will automatically leave 'Home' address as Primary if it exists
+//dpm('Deleting Addresses');
+			foreach ($result['values'] as $address) {
+				if ($address['location_type_id'] == 5) {
+					$result = civicrm_api3('Address', 'delete', [
+						'id' => $address['id'],
 					]);
+//dpm($result);
 				}
-			}
-			if ($billing && !isset($billing['street_address']) && !isset($billing['postal_code'])) {
-//					dpm('Billing empty, so delete it');						
-				$result = civicrm_api3('Address', 'delete', [
-				  'id' => $billing['id'],
-				]);
-//				dpm($result);
-			}
+			}		
 						
 		}
 		catch (Exception $e) {
