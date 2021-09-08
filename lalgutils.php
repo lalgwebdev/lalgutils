@@ -246,3 +246,83 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
 	CRM_Civitokens_Tokens::civicrm_tokenValues($values, $cids, $job, $tokens, $context);
 }
 	
+
+/************************************************************/
+// LALG Membership Extension 
+/************************************************************/
+/**
+ * Pre-hook checks Membership details and adds calculated extension to end date if appropriate.
+ */
+function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
+
+	// Only proceed if this is a Membership Edit
+	if ($objectName != 'Membership' || $op != 'edit') { return; }
+	
+	// Only proceed if this is the Household Contact
+	$membership = civicrm_api3('Membership', 'getsingle', [
+		'id' => $id,
+	]);	
+	if (isset($membership["owner_membership_id"])) { return; }
+	
+	// Check Membership Status
+	$mStatus = $params['status_id'];
+	if ($mStatus != '1' && $mStatus != '2') { return; }		// Must be New OR Current
+	
+	// Get First Related Individual Contact
+	$result = civicrm_api3('Relationship', 'get', [
+	  'sequential' => 1,
+	  'contact_id_b' => $params['contact_id'],
+	  'relationship_type_id' => 8,
+	]);
+	$cid = $result['values'][0]['contact_id_a'];
+
+	// Get Tags for the Contact
+	$result = civicrm_api3('EntityTag', 'get', [
+		'sequential' => 1,
+		'entity_table' => "civicrm_contact",
+		'entity_id' => $cid,
+	]);
+	$found = false;
+	foreach ($result['values'] as $tag){ 
+		if ($tag['tag_id'] == '13') { $found = true; }		// Look for 'Membership Requested'		
+	}
+	if (!$found) { return; }
+	
+	// Get the Latest Membership Action
+	$result = civicrm_api3('CustomValue', 'getsingle', [
+		'sequential' => 1,
+		'entity_id' => $cid,
+		'return.custom_30' => 1
+	]);
+	if ($result['latest'] != '2') { return; }				// Value 2 = 'Renew'.  Exit otherwise.
+	
+	// Check still within the agreed period.  Unextended end date must be <= 28th Feb 2022.
+	$newDate = strtotime($params['end_date']);				//New Date is including standart 12 months
+	if (date("Y-m-d", $newDate) > "2023-02-28") { return; }
+	
+	// Calculate length of extension. 
+	// The algorithm has three parameters, all measured in days:
+	$threshold = 365*15;		// Start giving the extension after 15 years continuous membership.
+	$cutoff = 365*20;			// Stop giving the extension after 20 years ditto.
+	$cap = 240;					// Maximum length extension to give at cutoff and beyond.  Equals 8 months
+	
+	$startDate = strtotime($params['start_date']);
+	$secs = $newDate - $startDate;					// Length of prior membership, plus one year, in seconds
+dpm($secs);
+	$days = ceil($secs / 86400) - 365;				// Length of prior membership, only, in days  
+	$days = $days - $threshold;						// Length of Membership beyond 15-year threshold
+dpm($days);
+	
+	// Check length of membership is longer than threshold
+	if ($days <= 0) { return; }						// Must be more that the Threshold 
+
+	$extn = $days/(($cutoff - $threshold)/$cap);	// Spread max extension between Threshold and Cutoff
+	$extn = min(round($extn, 0), $cap);				// Round to integer, and cap
+dpm($extn);
+	
+	// Change End Date
+	$newDate = strtotime("+ " . $extn . " Days", $newDate);
+	$params['end_date'] = date("Ymd", $newDate);
+
+}	
+
