@@ -308,17 +308,17 @@ function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
 	
 	$startDate = strtotime($params['start_date']);
 	$secs = $newDate - $startDate;					// Length of prior membership, plus one year, in seconds
-dpm($secs);
+//dpm($secs);
 	$days = ceil($secs / 86400) - 365;				// Length of prior membership, only, in days  
 	$days = $days - $threshold;						// Length of Membership beyond 15-year threshold
-dpm($days);
+//dpm($days);
 	
 	// Check length of membership is longer than threshold
 	if ($days <= 0) { return; }						// Must be more that the Threshold 
 
 	$extn = $days/(($cutoff - $threshold)/$cap);	// Spread max extension between Threshold and Cutoff
 	$extn = min(round($extn, 0), $cap);				// Round to integer, and cap
-dpm($extn);
+//dpm($extn);
 	
 	// Change End Date
 	$newDate = strtotime("+ " . $extn . " Days", $newDate);
