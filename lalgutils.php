@@ -302,7 +302,7 @@ function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
 	
 	// Calculate length of extension. 
 	// The algorithm has three parameters, all measured in days:
-	$threshold = 365*15;		// Start giving the extension after 15 years continuous membership.
+	$threshold = 0;				// Start giving the extension immediately, simple straight line.
 	$cutoff = 365*20;			// Stop giving the extension after 20 years ditto.
 	$cap = 240;					// Maximum length extension to give at cutoff and beyond.  Equals 8 months
 	
