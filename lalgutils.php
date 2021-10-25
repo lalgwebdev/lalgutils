@@ -254,7 +254,6 @@ function lalgutils_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = a
  * Pre-hook checks Membership details and adds calculated extension to end date if appropriate.
  */
 function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
-
 	// Only proceed if this is a Membership Edit
 	if ($objectName != 'Membership' || $op != 'edit') { return; }
 	
@@ -264,14 +263,16 @@ function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
 	]);	
 	if (isset($membership["owner_membership_id"])) { return; }
 	
+//dpm($params);	
 	// Check Membership Status
-	$mStatus = $params['status_id'];
-	if ($mStatus != '1' && $mStatus != '2') { return; }		// Must be New OR Current
+	$pStatus = [2, 9, 3];							// Permitted states Current, Renewal, Overdue
+	$mStatus = $membership['status_id'];			// Status prior to renewal
+	if (!in_array($mStatus, $pStatus)) { return; }
 	
 	// Get First Related Individual Contact
 	$result = civicrm_api3('Relationship', 'get', [
 	  'sequential' => 1,
-	  'contact_id_b' => $params['contact_id'],
+	  'contact_id_b' => $membership['contact_id'],
 	  'relationship_type_id' => 8,
 	]);
 	$cid = $result['values'][0]['contact_id_a'];
@@ -314,7 +315,7 @@ function lalgutils_civicrm_pre($op, $objectName, $id, &$params) {
 //dpm($days);
 	
 	// Check length of membership is longer than threshold
-	if ($days <= 0) { return; }						// Must be more that the Threshold 
+	if ($days <= 0) { return; }						// Must be more than the Threshold 
 
 	$extn = $days/(($cutoff - $threshold)/$cap);	// Spread max extension between Threshold and Cutoff
 	$extn = min(round($extn, 0), $cap);				// Round to integer, and cap
