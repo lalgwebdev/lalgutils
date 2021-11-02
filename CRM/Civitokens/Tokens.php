@@ -11,7 +11,7 @@ class CRM_Civitokens_Tokens {
 * Implements the hook_civicrm_tokens
 * Params - Array of tokens to be declared
 */
-	public function civicrm_tokens(&$tokens) {
+	public static function civicrm_tokens(&$tokens) {
 		$tokens['paylater'] = array(
 			'paylater.membership_fee' => 'Pay Later - Membership Fee',
 		);
@@ -27,7 +27,7 @@ class CRM_Civitokens_Tokens {
 *	$cids	- Contact Ids requiring Token values
 *	$tokens	- Tokens for which values required
 */
-	public function civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+	public static function civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
 //dpm($cids);
 //dpm($tokens);
 		// Pay Later tokens if these are required
