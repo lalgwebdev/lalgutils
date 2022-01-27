@@ -37,7 +37,11 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		
 		// Get the related Membership 
 		//dpm('Getting the related Household Membership');
-		$result = civicrm_api3('Membership', 'get', ['sequential' => 1, 'contact_id' => $contactId,]);
+		$result = civicrm_api3('Membership', 'get', [
+			'sequential' => 1, 
+			'contact_id' => $contactId,
+			'options' => ['sort' => "end_date DESC"],	// Ensure use most recent if there are two for any reason
+		]);
 		$membership = $result['values'][0];
 //dpm($membership);
 		
