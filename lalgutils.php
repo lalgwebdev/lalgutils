@@ -185,6 +185,10 @@ function lalgutils_civicrm_searchTasks($objectName, &$tasks) {
     $tasks[] = [
       'title' => 'LALG - Print Labels',
       'class' => 'CRM_Contact_Form_Task_LalgPrintLabels'
+    ];    
+	$tasks[] = [
+      'title' => 'LALG - Export CSV Addresses',
+      'class' => ['CRM_Contact_Export_Form_LalgSelect', 'CRM_Contact_Export_Form_LalgMap']
     ];
     $tasks[] = [
       'title' => 'LALG - Delete Members',
