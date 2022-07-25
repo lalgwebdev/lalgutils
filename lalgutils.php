@@ -207,6 +207,9 @@ function lalgutils_civicrm_buildForm($formName, &$form) {
 	  if ($formName == "CRM_Contact_Form_Task_LalgPrintLabels") {
 		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/printlabels.js');
 	  }  
+	  if ($formName == "CRM_Contact_Export_Form_LalgSelect") {
+		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/exportCSV.js');
+	  }  
 	  if (strpos($_SERVER['REQUEST_URI'], "lalgwf=2" ) !== false) {
 		Civi::resources()->addScriptFile(E::LONG_NAME, 'js/searchlabels.js');
 	  }	  

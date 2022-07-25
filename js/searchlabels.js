@@ -6,7 +6,7 @@ jQuery(document).ready(function(){
 //	jQuery('select#task option[value!="112"]').not(':first-child').remove();
 	jQuery('select#task option').not(':first-child').each(function(){
       val = jQuery(this).attr("value");
-	  if (val != 8 && val != 112) {
+	  if (val != 113 && val != 112) {
 		  jQuery(this).remove();
 	  }
     });
