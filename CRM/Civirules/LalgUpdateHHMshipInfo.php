@@ -23,7 +23,9 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 	}
 
 	/**
-	 * Method processAction to execute the action
+	 * Method processAction to execute the action.  
+	 * Updates the status fields for the whole Household - 
+	 *    the Household Contact and its Individual members.
 	 *
 	 * @param CRM_Civirules_TriggerData_TriggerData $triggerData
 	 * @access public
@@ -32,18 +34,24 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 	public function processAction(CRM_Civirules_TriggerData_TriggerData $triggerData) {
 	  try {	
 		// Get Household Id
-		$contactId = $triggerData->getContactId();
-	    //dpm('Action called for Id: ' . $contactId);
+		$hhId = $triggerData->getContactId();
+		// Get the list of Individual members
+		$relationships = civicrm_api4('Relationship', 'get', [
+		  'select' => [
+			'contact_id_a',
+		  ],
+		  'where' => [
+			['contact_id_b', '=', $hhId],
+		  ],
+		]);
 		
 		// Get the related Membership 
-		//dpm('Getting the related Household Membership');
 		$result = civicrm_api3('Membership', 'get', [
 			'sequential' => 1, 
-			'contact_id' => $contactId,
+			'contact_id' => $hhId,
 			'options' => ['sort' => "end_date DESC"],	// Ensure use most recent if there are two for any reason
 		]);
 		$membership = $result['values'][0];
-//dpm($membership);
 		
 		// Format Membership Expiry Date
 		$endDate = DateTime::createFromFormat('Y-m-d', $membership['end_date']);
@@ -51,9 +59,15 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		//dpm($endDate);
 		// Set End Date field
 		$result = civicrm_api3('CustomValue', 'create', [
-		  'entity_id' => $contactId, 
+		  'entity_id' => $hhId, 
 		  'custom_Household_Fields:Membership_End_Date' => $endDate,
 		]);
+		foreach ($relationships as $rel) {
+			$result = civicrm_api3('CustomValue', 'create', [
+			  'entity_id' => $rel['contact_id_a'], 
+			  'custom_User_Fields:Membership_End_Date' => $endDate,
+			]);						
+		}
 		
 		// Get Membership Type
 		$membershipType = $membership['membership_name'];
@@ -62,7 +76,7 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		  'sequential' => 1,
 		  'id' => $membership['status_id'],
 		]);
-//dpm($result);
+
 		$status = $result['values'][0];
 		if(!$status['is_current_member']) {
 			$membershipType = $status['label'];
@@ -70,15 +84,26 @@ class CRM_Civirules_LalgUpdateHHMshipInfo extends CRM_Civirules_Action {
 		
 		// Set Membership Type custom field
 		$result = civicrm_api3('CustomValue', 'create', [
-		  'entity_id' => $contactId, 
+		  'entity_id' => $hhId, 
 		  'custom_Household_Fields:Membership_Type' => $membershipType,
 		]);
-		
+		foreach ($relationships as $rel) {
+			$result = civicrm_api3('CustomValue', 'create', [
+			  'entity_id' => $rel['contact_id_a'], 
+			  'custom_User_Fields:Membership_Type' => $membershipType,
+			]);						
+		}
 		// Set Membership Status custom field
 		$result = civicrm_api3('CustomValue', 'create', [
-		  'entity_id' => $contactId, 
+		  'entity_id' => $hhId, 
 		  'custom_Household_Fields:Membership_Status' => $status['label'],
 		]);		
+		foreach ($relationships as $rel) {
+			$result = civicrm_api3('CustomValue', 'create', [
+			  'entity_id' => $rel['contact_id_a'], 
+			  'custom_User_Fields:Membership_Status' => $status['label'],
+			]);						
+		}
 		
 	  } 
 	  catch (Exception $e) {
